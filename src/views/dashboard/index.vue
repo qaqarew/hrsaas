@@ -5,6 +5,7 @@
 </template>
 
 <script>
+
 import { mapGetters } from 'vuex'
 
 export default {
@@ -14,6 +15,9 @@ export default {
       'name'
     ])
   }
+  // created() {
+  //   this.$store.dispatch('user/getUserInfo')
+  // }
 }
 </script>
 
