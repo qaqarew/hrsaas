@@ -1,12 +1,14 @@
 <template>
   <div>
-    approvals
+    <device-manag-ement />
   </div>
 </template>
 
 <script>
+import DeviceManagEment from './commpoents/DeviceManagEment.vue'
 export default {
   name: 'HrsaasIndex',
+  components: { DeviceManagEment },
 
   data() {
     return {
