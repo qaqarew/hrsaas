@@ -14,3 +14,11 @@ export const getUserDeatilById = (id) => {
   })
 }
 
+export const saveUserDeatilById = (data) => {
+  return request({
+    url: `/sys/user/${data.id}`,
+    method: 'put',
+    data
+  })
+}
+

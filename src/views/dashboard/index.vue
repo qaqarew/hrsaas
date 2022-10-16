@@ -1,7 +1,7 @@
 <template>
   <div class="dashboard-container">
     <div class="dashboard-text">name: {{ name }}</div>
-    <upload-excel :before-upload="beforeUpload" :on-success="handleSuccess" />
+
   </div>
 </template>
 
@@ -11,11 +11,13 @@ import { mapGetters } from 'vuex'
 
 export default {
   name: 'Dashboard',
+
   computed: {
     ...mapGetters([
       'name'
     ])
   },
+
   methods: {
     handleSuccess(data) {
       console.log(data)
@@ -26,7 +28,14 @@ export default {
         return false
       }
       return true
+    },
+    onsuccess1(val) {
+      console.log(123, val)
+    },
+    onsuccess2(val) {
+      console.log(456, val)
     }
+
   }
   // created() {
   //   this.$store.dispatch('user/getUserInfo')

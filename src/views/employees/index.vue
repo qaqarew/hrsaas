@@ -14,6 +14,13 @@
     <el-card>
       <el-table v-loading="loading" border :data="List">
         <el-table-column label="序号" sortable="" width="80" type="index" />
+        <el-table-column label="头像" prop="username">
+          <template slot-scope="{row}">
+            <img style="" :src="row.staffPhoto" alt="" class="vm-type-image" @click="genQrCode(row.staffPhoto)">
+          </template>
+
+        </el-table-column>
+
         <el-table-column label="姓名" prop="username" />
         <el-table-column label="工号" prop="workNumber" />
         <el-table-column label="聘用形式" prop="formOfEmployment" :formatter="formatEmployment" />
@@ -24,7 +31,7 @@
         <el-table-column label="账户状态" prop="enableState" />
         <el-table-column label="操作" fixed="right" width="280">
           <template slot-scope="{row}">
-            <el-button type="text" size="small">查看</el-button>
+            <el-button type="text" size="small" @click="goDateil(row)">查看</el-button>
             <el-button type="text" size="small">转正</el-button>
             <el-button type="text" size="small">调岗</el-button>
             <el-button type="text" size="small">离职</el-button>
@@ -47,13 +54,21 @@
         />
       </el-row>
     </el-card>
+    <el-dialog
+      title="提示"
+      :visible.sync="dialogVisibleQrCode"
+      width="50%"
+    >
+      <canvas ref="canvas" />
+
+    </el-dialog>
     <add-employee :dialog-visible.sync="dialogVisible" />
 
   </div>
 </template>
 
 <script>
-
+import QRcode from 'qrcode'
 import EmployeesList from '@/api/constant/employees'
 import PageTools from '@/components/PageTools/index.vue'
 import { getEmployeeListAPI, delEmployee } from '@/api/employees'
@@ -73,7 +88,8 @@ export default {
       total: 0,
       loading: false,
       hireType: EmployeesList.hireType,
-      dialogVisible: false
+      dialogVisible: false,
+      dialogVisibleQrCode: false
     }
   },
   mounted() {
@@ -84,6 +100,7 @@ export default {
     async getEmployeeList() {
       try {
         const { rows, total } = await getEmployeeListAPI(this.page)
+        console.log(rows, total)
         this.loading = true
         this.List = rows
         this.total = total
@@ -145,11 +162,38 @@ export default {
         autoWidth: true, // 非必填
         bookType: 'xlsx' // 非必填
       })
+    },
+    goDateil(row) {
+      this.$router.push('/employees/detail/' + row.id)
+    },
+    genQrCode(staffPhoto) {
+      if (!staffPhoto) return this.$message.error('暂无头像')
+      // vue:数据驱动/组件系统
+      // 数据驱动：数据变化=>视图变化
+      // 数据变化同步=>vue背后 将视图更新（异步的）
+      // 如果是同步的 数据变了 视图立即变 太消耗性能了
+      // 等所有的数据 变化了
+      this.dialogVisibleQrCode = true
+      // 方法/等视图更新后触发，获取到最新的视图:$nextTick立即执行异步操作.
+      this.$nextTick(() => {
+        QRcode.toCanvas(this.$refs.canvas, staffPhoto, function(error) {
+          if (error) console.error(error)
+          console.log('success')
+        })
+      })
     }
   }
 }
 </script>
 
 <style lang="scss" scoped>
-
+  .vm-type-image {
+    display: block;
+    width: 70px;
+    height: 65px;
+    -o-object-fit: cover;
+    object-fit: cover;
+    border-radius: 50%;
+    background: #f3f6fb;
+    border: 1px solid #f3f6fb;}
 </style>
